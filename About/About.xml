@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>Raiders Never Die</name>
+  <author>schplorg</author>
+  <supportedVersions>
+    <li>1.0</li>
+  </supportedVersions>
+  <description>V1.0
+    Raiders by default die more easily than colonists, even when using fists or melee weapons. This mod removes the additional death risk for raiders. Use the mod settings to change it to something in between.
+  </description>
+</ModMetaData>
