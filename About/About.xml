@@ -7,14 +7,14 @@
   </supportedVersions>
 	<url>https://github.com/schplorg/raiders-never-die</url>
   <description>
-  Raiders by default die more easily than colonists, even when using fists or melee weapons. This mod removes the additional death risk for raiders. Use the mod settings to change it to something in between.
-  
-  Version History:
-  V1.0.1
+Raiders by default die more easily than colonists, even when using fists or melee weapons. This mod removes the additional death risk for raiders. Use the mod settings to change it to something in between.
+
+Version History:
+V1.0.1
     Fixed Harmony Method() bug
-  V1.0
+V1.0
     Initial Release
 
-  Github: https://github.com/schplorg/raiders-never-die
+Github: https://github.com/schplorg/raiders-never-die
   </description>
 </ModMetaData>
