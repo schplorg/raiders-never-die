@@ -18,22 +18,24 @@ namespace RaidersNeverDie
         {
             HarmonyInstance harmony = HarmonyInstance.Create("rimworld.schplorg.raidersneverdie");
             // CheckForStateChange Patch
-            SuperPatch(harmony, typeof(Verse.Pawn_HealthTracker),"CheckForStateChange","CheckForStateChange_Prefix");
+            SuperPatch(harmony, typeof(Verse.Pawn_HealthTracker), "CheckForStateChange", "CheckForStateChange_Prefix");
         }
 
-        private static void SuperPatch(HarmonyInstance harmony, Type t, string a, string b){
-            MethodInfo targetmethod = AccessTools.Method(t,a);
+        private static void SuperPatch(HarmonyInstance harmony, Type t, string a, string b)
+        {
+            MethodInfo targetmethod = AccessTools.Method(t, a);
             HarmonyMethod prefixmethod = new HarmonyMethod(typeof(RaidersNeverDie.HarmonyPatches).GetMethod(b));
-            harmony.Patch( targetmethod, prefixmethod, null );
+            harmony.Patch(targetmethod, prefixmethod, null);
         }
 
         public static bool CheckForStateChange_Prefix(Verse.Pawn_HealthTracker __instance, DamageInfo? dinfo, Hediff hediff)
         {
             var inst = __instance;
-            var pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>();
-            var forceIncap= Traverse.Create(__instance).Field("forceIncap").GetValue<bool>();
-            var shouldBeDead = Traverse.Create(__instance).Method("ShouldBeDead").GetValue<bool>();
-            var shouldBeDowned= Traverse.Create(__instance).Method("ShouldBeDowned").GetValue<bool>();
+            var traversed = Traverse.Create(__instance);
+            Pawn pawn = traversed.Field("pawn").GetValue<Pawn>();
+            var forceIncap = traversed.Field("forceIncap").GetValue<bool>();
+            var shouldBeDead = traversed.Method("ShouldBeDead").GetValue<bool>();
+            var shouldBeDowned = traversed.Method("ShouldBeDowned").GetValue<bool>();
             if (inst.Dead)
             {
                 return false;
@@ -52,14 +54,16 @@ namespace RaidersNeverDie
                     if (!forceIncap && dinfo.HasValue && dinfo.Value.Def.ExternalViolenceFor(pawn) && !pawn.IsWildMan() && (pawn.Faction == null || !pawn.Faction.IsPlayer) && (pawn.HostFaction == null || !pawn.HostFaction.IsPlayer))
                     {
                         float chance = pawn.RaceProps.Animal ? 0.5f : ((!pawn.RaceProps.IsMechanoid) ? (HealthTuning.DeathOnDownedChance_NonColonyHumanlikeFromPopulationIntentCurve.Evaluate(StorytellerUtilityPopulation.PopulationIntent) * Find.Storyteller.difficulty.enemyDeathOnDownedChanceFactor) : 1f);
-                        if (Rand.Chance(RNDSettings.raiderDeaths*chance))
+                        if (Rand.Chance(RNDSettings.raiderDeaths * chance))
                         {
                             pawn.Kill(dinfo);
                             return false;
                         }
                     }
                     forceIncap = false;
-                    Traverse.Create(__instance).Method("MakeDowned",dinfo, hediff).GetValue();
+                    Type[] t = { typeof(DamageInfo?), typeof(Hediff) };
+                    object[] ps = { dinfo, hediff };
+                    traversed.Method("MakeDowned", t, ps).GetValue();
                 }
                 else
                 {
@@ -95,7 +99,7 @@ namespace RaidersNeverDie
             }
             else if (!shouldBeDowned)
             {
-                Traverse.Create(__instance).Method("MakeUndowned").GetValue();
+                traversed.Method("MakeUndowned").GetValue();
             }
             return false;
         }
