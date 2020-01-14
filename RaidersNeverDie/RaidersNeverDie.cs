@@ -53,8 +53,11 @@ namespace RaidersNeverDie
                 {
                     if (!forceIncap && dinfo.HasValue && dinfo.Value.Def.ExternalViolenceFor(pawn) && !pawn.IsWildMan() && (pawn.Faction == null || !pawn.Faction.IsPlayer) && (pawn.HostFaction == null || !pawn.HostFaction.IsPlayer))
                     {
-                        float chance = pawn.RaceProps.Animal ? 0.5f : ((!pawn.RaceProps.IsMechanoid) ? (HealthTuning.DeathOnDownedChance_NonColonyHumanlikeFromPopulationIntentCurve.Evaluate(StorytellerUtilityPopulation.PopulationIntent) * Find.Storyteller.difficulty.enemyDeathOnDownedChanceFactor) : 1f);
-                        if (Rand.Chance(RNDSettings.raiderDeaths * chance))
+                        float animalChance = RNDSettings.animalDeaths*0.5f;
+                        float raiderChance = RNDSettings.raiderDeaths*(HealthTuning.DeathOnDownedChance_NonColonyHumanlikeFromPopulationIntentCurve.Evaluate(StorytellerUtilityPopulation.PopulationIntent) * Find.Storyteller.difficulty.enemyDeathOnDownedChanceFactor);
+                        float mechanoidChance = RNDSettings.mechanoidDeaths;
+                        float chance = pawn.RaceProps.Animal ? animalChance : ((!pawn.RaceProps.IsMechanoid) ? raiderChance : mechanoidChance);
+                        if (Rand.Chance(chance))
                         {
                             pawn.Kill(dinfo);
                             return false;
